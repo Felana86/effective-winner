@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pré-saison U13 Filles — Suivi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121317;
+    --panel:#1c1e25;
+    --panel-2:#23262f;
+    --line:#31343e;
+    --chalk:#f3efe6;
+    --muted:#96979f;
+    --orange:#e8622c;
+    --orange-dim:#e8622c33;
+    --facile:#4c9a6b;
+    --moderee:#e0a233;
+    --donne:#c6294a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1f2129 0%, var(--bg) 60%);
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:80px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 16px;}
+
+  /* HERO */
+  .hero{
+    padding:28px 0 20px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    margin-bottom:18px;
+  }
+  .kicker{
+    font-family:'Oswald',sans-serif;
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--orange);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .hero h1{
+    font-size:28px;
+    font-weight:700;
+    margin:0 0 2px;
+    line-height:1.05;
+  }
+  .hero .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+  }
+
+  .ring-wrap{
+    position:relative;
+    width:168px;height:168px;
+    margin:22px auto 6px;
+  }
+  svg.ring{transform:rotate(-90deg);}
+  .ring-track{fill:none;stroke:var(--panel-2);stroke-width:10;}
+  .ring-fill{fill:none;stroke:var(--orange);stroke-width:10;stroke-linecap:round;
+    transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
+  .ring-net{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .ring-net .pct{font-family:'Oswald';font-size:34px;font-weight:700;}
+  .ring-net .lbl{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:2px;}
+
+  .legend{
+    display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+    margin-top:16px;font-size:11px;color:var(--muted);
+  }
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+
+  /* WEEK */
+  .week{margin-bottom:26px;}
+  .week-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    padding:10px 2px;border-bottom:2px solid var(--orange);margin-bottom:12px;
+  }
+  .week-head h2{font-size:16px;margin:0;color:var(--chalk);}
+  .week-head .dates{font-size:11px;color:var(--muted);font-family:'Inter';text-transform:none;letter-spacing:0;}
+  .week-theme{font-size:12px;color:var(--muted);margin:-6px 0 14px 2px;}
+
+  /* SESSION CARD */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .card-head{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 14px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .lvl-bar{width:4px;align-self:stretch;border-radius:3px;flex-shrink:0;min-height:44px;}
+  .lvl-facile{background:var(--facile);}
+  .lvl-moderee{background:var(--moderee);}
+  .lvl-donne{background:var(--donne);}
+
+  .card-head-txt{flex:1;min-width:0;}
+  .card-day{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;}
+  .card-title{font-family:'Oswald';font-size:15px;font-weight:600;line-height:1.2;}
+  .card-meta{font-size:11px;color:var(--muted);margin-top:3px;}
+
+  .mini-ring{position:relative;width:38px;height:38px;flex-shrink:0;}
+  .mini-ring svg{transform:rotate(-90deg);}
+  .mini-track{fill:none;stroke:var(--panel-2);stroke-width:4;}
+  .mini-fill{fill:none;stroke:var(--orange);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .4s;}
+  .mini-ring .chk{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:10px;color:var(--muted);font-family:'Oswald';
+  }
+  .card.done .mini-fill{stroke:var(--facile);}
+  .card.done .card-title{color:var(--facile);}
+
+  .chevron{
+    width:16px;height:16px;flex-shrink:0;color:var(--muted);
+    transition:transform .25s;
+  }
+  .card.open .chevron{transform:rotate(180deg);}
+
+  .card-body{
+    max-height:0;overflow:hidden;transition:max-height .35s ease;
+    border-top:1px solid var(--line);
+  }
+  .card.open .card-body{max-height:3000px;}
+  .card-body-inner{padding:6px 14px 16px;}
+
+  .section{margin-top:14px;}
+  .section-title{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-family:'Oswald';font-size:12px;letter-spacing:.08em;
+    color:var(--orange);text-transform:uppercase;margin-bottom:6px;
+  }
+  .section-title .dur{color:var(--muted);font-family:'Inter';font-size:11px;letter-spacing:0;text-transform:none;}
+
+  .ex-row{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:8px 0;border-bottom:1px solid var(--line);
+  }
+  .ex-row:last-child{border-bottom:none;}
+  .ex-check{
+    width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);
+    flex-shrink:0;margin-top:1px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--panel-2);
+    transition:background .15s, border-color .15s;
+  }
+  .ex-check.checked{background:var(--orange);border-color:var(--orange);}
+  .ex-check svg{width:12px;height:12px;color:var(--panel);opacity:0;transition:opacity .1s;}
+  .ex-check.checked svg{opacity:1;}
+  .ex-txt{flex:1;font-size:13.5px;line-height:1.35;}
+  .ex-txt.checked-txt{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line);}
+  .ex-detail{color:var(--muted);font-size:12px;white-space:nowrap;padding-top:1px;}
+
+  /* TESTS (séance 9) */
+  .test-row{
+    background:var(--panel-2);border-radius:10px;padding:10px 12px;margin-bottom:8px;
+  }
+  .test-row label{display:block;font-size:12.5px;margin-bottom:6px;color:var(--chalk);}
+  .test-row .test-hint{color:var(--muted);font-size:11px;display:block;margin-bottom:6px;}
+  .test-row input{
+    width:100%;background:var(--panel);border:1px solid var(--line);
+    color:var(--chalk);border-radius:8px;padding:8px 10px;font-size:13px;
+    font-family:'Inter';
+  }
+  .test-row input:focus{outline:none;border-color:var(--orange);}
+
+  .compare-section{overflow-x:auto;}
+  .compare-table{
+    width:100%;border-collapse:collapse;font-size:11.5px;
+    background:var(--panel-2);border-radius:10px;overflow:hidden;
+    min-width:420px;
+  }
+  .compare-table th, .compare-table td{
+    padding:9px 8px;text-align:left;border-bottom:1px solid var(--line);
+  }
+  .compare-table thead th{
+    font-family:'Oswald';font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);background:var(--panel);
+  }
+  .compare-table thead th:nth-child(2){color:var(--muted);}
+  .compare-table thead th:nth-child(3){color:var(--orange);}
+  .compare-table thead th:nth-child(4){color:#f0a25c;}
+  .compare-table tbody tr:last-child td{border-bottom:none;}
+  .compare-table td:first-child{color:var(--chalk);}
+  .compare-table td:nth-child(2){color:var(--muted);}
+  .compare-table td:nth-child(3){color:var(--chalk);font-weight:600;}
+  .compare-table td:nth-child(4){color:#f0a25c;font-weight:600;}
+  .compare-table td.empty{color:var(--line);font-weight:400;}
+
+  .tip{
+    background:var(--orange-dim);border:1px solid #e8622c55;border-radius:10px;
+    padding:10px 12px;font-size:12px;color:var(--chalk);margin-top:14px;line-height:1.5;
+  }
+  .tip b{color:var(--orange);}
+
+  .reset-btn{
+    width:100%;margin-top:14px;padding:10px;border-radius:10px;
+    background:transparent;border:1px solid var(--line);color:var(--muted);
+    font-family:'Inter';font-size:12px;cursor:pointer;
+  }
+  .reset-btn:active{background:var(--panel-2);}
+
+  footer{
+    text-align:center;color:var(--muted);font-size:11px;
+    padding:24px 0 40px;
+  }
+  footer .coach{color:var(--orange);font-family:'Oswald';letter-spacing:.06em;}
+
+  .save-toast{
+    position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);
+    padding:8px 16px;border-radius:20px;font-size:12px;
+    opacity:0;transition:opacity .25s, transform .25s;
+    pointer-events:none;
+  }
+  .save-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .top-actions{
+    display:flex;justify-content:center;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap;
+  }
+  .global-reset{
+    background:none;border:none;color:var(--muted);font-size:11px;
+    text-decoration:underline;cursor:pointer;font-family:'Inter';
+  }
+  .action-btn{
+    background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);
+    font-family:'Inter';font-size:12px;font-weight:600;
+    padding:8px 14px;border-radius:20px;cursor:pointer;
+  }
+  .action-btn:active{background:var(--line);}
+
+  .hydro-tip{
+    margin-top:14px;font-size:11.5px;color:var(--muted);
+    background:var(--panel);border:1px solid var(--line);
+    display:inline-block;padding:7px 14px;border-radius:20px;
+  }
+
+  /* REST DAY CHIP */
+  .rest-chip{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 14px;margin-bottom:12px;
+    border:1px dashed var(--line);border-radius:12px;
+    color:var(--muted);font-size:12px;
+  }
+  .rest-chip .rest-icon{font-size:14px;}
+  .rest-chip b{color:var(--chalk);font-weight:600;}
+
+  /* CARD SUB-ACTIONS (calendar / print) */
+  .card-actions{
+    display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;
+  }
+  .card-actions button{
+    flex:1;min-width:120px;
+    background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);
+    font-family:'Inter';font-size:11.5px;padding:9px 10px;border-radius:10px;cursor:pointer;
+  }
+  .card-actions button:active{background:var(--line);}
+
+  /* RESSENTI (feeling check-in) */
+  .feeling-box{
+    margin-top:2px;padding:12px;background:var(--panel-2);border-radius:12px;
+  }
+  .feeling-label{
+    font-family:'Oswald';font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:8px;
+  }
+  .feeling-options{display:flex;gap:8px;}
+  .feeling-opt{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:8px 4px;border-radius:10px;border:1.5px solid var(--line);
+    background:var(--panel);cursor:pointer;font-size:10px;color:var(--muted);
+  }
+  .feeling-opt .em{font-size:18px;}
+  .feeling-opt.selected{border-color:var(--orange);background:var(--orange-dim);color:var(--chalk);}
+
+  /* NOTES */
+  .notes-box{margin-top:14px;}
+  .notes-box label{
+    display:block;font-family:'Oswald';font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:6px;
+  }
+  .notes-box textarea{
+    width:100%;min-height:60px;background:var(--panel-2);border:1px solid var(--line);
+    color:var(--chalk);border-radius:10px;padding:9px 11px;font-size:13px;
+    font-family:'Inter';resize:vertical;
+  }
+  .notes-box textarea:focus{outline:none;border-color:var(--orange);}
+
+  /* EXERCISE VISUALS */
+  .ex-visual{
+    margin:6px 0 4px 30px;padding:8px 10px;background:var(--panel-2);
+    border-radius:10px;font-size:11px;color:var(--muted);
+  }
+  .beef-row{display:flex;gap:6px;margin-top:6px;}
+  .beef-step{
+    flex:1;text-align:center;background:var(--panel);border-radius:8px;padding:6px 2px;
+  }
+  .beef-step .em{font-size:15px;display:block;}
+  .beef-step .lb{font-size:9px;color:var(--chalk);display:block;margin-top:2px;line-height:1.2;}
+  .defense-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;font-size:20px;}
+  .defense-row .arrow{color:var(--orange);font-size:16px;}
+  .defense-no-cross{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    margin-top:6px;font-size:11px;color:var(--muted);
+  }
+
+  /* COMPARISON BARS */
+  .compare-bars{margin-top:6px;}
+  .compare-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:10px;color:var(--muted);}
+  .compare-bar-track{flex:1;height:6px;background:var(--panel);border-radius:4px;overflow:hidden;}
+  .compare-bar-fill{height:100%;border-radius:4px;}
+  .compare-bar-fill.start{background:var(--line);}
+  .compare-bar-fill.end{background:var(--orange);}
+  .compare-bar-fill.end2{background:#f0a25c;}
+
+  /* PRINT MODE */
+  @media print{
+    body.printing .hero, body.printing footer, body.printing .save-toast,
+    body.printing .week-head, body.printing .week-theme, body.printing .rest-chip,
+    body.printing .chevron, body.printing .card-actions, body.printing .reset-btn,
+    body.printing .mini-ring{ display:none !important; }
+    body.printing .card{ display:none !important; border:none; }
+    body.printing .card.print-target{ display:block !important; }
+    body.printing .card.print-target .card-body{ max-height:none !important; }
+    body.printing{ background:#fff; color:#000; }
+    body.printing .card-title, body.printing .section-title{ color:#000 !important; }
+    body.printing .ex-detail, body.printing .card-meta, body.printing .card-day{ color:#444 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="kicker">Stade Poitevin Basketball</div>
+    <h1>Pré-saison U13 Filles</h1>
+    <div class="sub">Travail individuel à domicile · 16 juillet → 3 août · 3 séances / semaine</div>
+
+    <div class="ring-wrap">
+      <svg class="ring" width="168" height="168" viewBox="0 0 168 168">
+        <circle class="ring-track" cx="84" cy="84" r="74"></circle>
+        <circle class="ring-fill" id="mainRing" cx="84" cy="84" r="74"
+          stroke-dasharray="464.9" stroke-dashoffset="464.9"></circle>
+      </svg>
+      <div class="ring-net">
+        <div class="pct" id="mainPct">0%</div>
+        <div class="lbl" id="mainSub">0 / 9 séances</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--facile)"></i>Facile</span>
+      <span><i class="dot" style="background:var(--moderee)"></i>Modérée</span>
+      <span><i class="dot" style="background:var(--donne)"></i>On se donne</span>
+    </div>
+
+    <div class="hydro-tip">💧 Pense à ta bouteille d'eau avant chaque séance, surtout en plein été !</div>
+
+    <div class="top-actions">
+      <button class="action-btn" id="copyRecap">📋 Copier mon récap</button>
+      <button class="global-reset" id="globalReset">Réinitialiser tout le suivi</button>
+    </div>
+  </div>
+
+  <div id="weeks"></div>
+
+  <footer>
+    Programme réalisé par <span class="coach">AY Préparation Physique</span><br>
+    Ta progression est enregistrée automatiquement sur cet appareil.
+  </footer>
+</div>
+
+<div class="save-toast" id="toast">Progression enregistrée</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const PROGRAM = [
+  {
+    week:1, dates:"16 – 20 juillet", theme:"Mise en route — on se réveille",
+    restDays:["Vendredi 17 juillet","Dimanche 19 juillet"],
+    sessions:[
+      {id:"s1", date:"2026-07-16", day:"Jeudi 16 juillet", title:"Cardio léger + Coordination + Ball-handling", level:"facile", duration:"~45 min",
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Marche rapide ou footing très léger","5 min"],
+            ["Cercles de bras","10 avant + 10 arrière"],
+            ["Rotations de hanches","10 chaque sens"],
+          ]},
+          {name:"Bloc cardio — légèreté & plaisir", dur:"15 min", ex:[
+            ["Course légère continue","10 min continues"],
+            ["Skippings doux (montées de genoux)","3 x 20 sec"],
+            ["Talons-fesses","3 x 20 sec"],
+          ]},
+          {name:"Bloc basket", dur:"12 min", ex:[
+            ["Dribble main droite seule","2 x 1 min"],
+            ["Dribble main gauche seule","2 x 1 min"],
+            ["Transfert ballon autour du corps","3 x 30 sec"],
+            ["Handles alternance droite/gauche","3 x 30 sec"],
+          ]},
+          {name:"Retour au calme", dur:"10 min", ex:[
+            ["Étirement quadriceps","2 x 30 sec / jambe"],
+            ["Étirement ischio-jambiers","2 x 30 sec / jambe"],
+            ["Étirement mollets","2 x 30 sec / jambe"],
+            ["Respiration de récupération","2 min"],
+          ]},
+        ],
+        tests:[
+          {id:"s1-t1", label:"Test départ — endurance (course sans t'arrêter)", hint:"Combien de temps tiens-tu en courant à allure confortable ?", placeholder:"ex : 8 min"},
+          {id:"s1-t2", label:"Test départ — gainage (planche tenue)", hint:"Temps tenu en planche avant, jusqu'à la fatigue.", placeholder:"ex : 35 sec"},
+          {id:"s1-t3", label:"Test départ — saut vertical", hint:"Repère un point touché en sautant (mur, porte, étagère).", placeholder:"ex : touche l'étagère du bas"},
+          {id:"s1-t4", label:"Test départ — maîtrise du dribble", hint:"Nombre de pertes de balle en 30 sec, main droite puis gauche.", placeholder:"ex : 4 pertes main gauche"},
+        ],
+        tip:"Le secret du bon dribble : ne pas regarder le ballon. Fixe un point devant toi. Prends 2 minutes pour noter tes 4 tests de départ ci-dessus — tu les retrouveras à la séance bilan !"
+      },
+      {id:"s2", date:"2026-07-18", day:"Samedi 18 juillet", title:"Renforcement doux + Équilibre + Agilité", level:"facile", duration:"~45 min",
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing léger","5 min"],
+            ["Fentes marchées","10 fentes / jambe"],
+            ["Rotations chevilles","10 chaque sens / pied"],
+          ]},
+          {name:"Renforcement doux mais efficace", dur:"18 min", ex:[
+            ["Squats poids du corps","3 x 10"],
+            ["Planche avant (gainage)","3 x 20 sec"],
+            ["Pont fessier","3 x 12"],
+            ["Pompes sur les genoux","3 x 8"],
+            ["Abdos — crunchs simples","3 x 12"],
+          ]},
+          {name:"Coordination & agilité", dur:"10 min", ex:[
+            ["Sauts en étoile","3 x 30 sec"],
+            ["Équilibre sur un pied","3 x 20 sec / pied"],
+            ["Déplacements latéraux défensifs","3 x 1 min","defense"],
+          ]},
+          {name:"Retour au calme", dur:"8 min", ex:[
+            ["Étirements cuisses + ischio + mollets","routine complète"],
+            ["Étirement du dos en boule","1 min"],
+          ]},
+        ],
+        tip:"Les déplacements défensifs sans jamais croiser les pieds — travaille-le bien !"
+      },
+      {id:"s3", date:"2026-07-20", day:"Lundi 20 juillet", title:"Endurance + Dribble en mouvement + Souplesse", level:"facile", duration:"~45 min",
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing progressif","7 min"],
+            ["Mobilité dynamique (genoux+talons-fesses+fentes)","1 tour = 30 reps"],
+          ]},
+          {name:"Bloc endurance", dur:"15 min", ex:[
+            ["Course continue","12 min continues"],
+            ["Accélérations finales","3 x 10 sec sprint"],
+          ]},
+          {name:"Bloc basket — dribble en mouvement", dur:"12 min", ex:[
+            ["Dribble en marchant, main droite","2 x aller-retour 15 m"],
+            ["Dribble en marchant, main gauche","2 x aller-retour 15 m"],
+            ["Dribble en trottinant (main dominante)","3 x aller-retour 15 m"],
+            ["Dribble croisé sur place","3 x 30 sec"],
+          ]},
+          {name:"Retour au calme + souplesse", dur:"10 min", ex:[
+            ["Grand étirement papillon","2 x 40 sec"],
+            ["Étirement chat-vache (dos)","10 allers-retours"],
+            ["Étirements classiques","routine complète"],
+          ]},
+        ],
+        tip:"Note ton temps de course sans t'arrêter — tu verras la progression dans 3 semaines !"
+      },
+    ]
+  },
+  {
+    week:2, dates:"23 – 27 juillet", theme:"Développement — on monte d'un cran",
+    restDays:["Vendredi 24 juillet","Dimanche 26 juillet"],
+    sessions:[
+      {id:"s4", date:"2026-07-23", day:"Jeudi 23 juillet", title:"Force + Explosivité + Dribble avancé", level:"moderee", duration:"~50 min",
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing","5 min"],
+            ["Circuit d'activation (skip+talons+fentes+cercles)","2 tours"],
+          ]},
+          {name:"Renforcement — force en progression", dur:"20 min", ex:[
+            ["Squats tempo lent (3-1-2)","4 x 10"],
+            ["Fentes avant alternées","3 x 10 / jambe"],
+            ["Planche avant tenue longue","3 x 30 sec"],
+            ["Pont fessier unilatéral","3 x 8 / jambe"],
+            ["Pompes classiques","3 x 8"],
+          ]},
+          {name:"Explosivité — premiers sauts", dur:"10 min", ex:[
+            ["Sauts verticaux sur place","3 x 8 (5 sec repos)"],
+            ["Sauts latéraux pieds joints","3 x 10 allers-retours"],
+          ]},
+          {name:"Bloc basket — dribble avancé", dur:"10 min", ex:[
+            ["Dribble haut puis bas","3 x 30 sec"],
+            ["Dribble entre les jambes (statique)","3 x 30 sec"],
+            ["Dribble en courant, changement de main","4 x aller-retour 15 m"],
+          ]},
+          {name:"Retour au calme", dur:"8 min", ex:[
+            ["Étirements complets","routine complète"],
+            ["Étirement épaules","2 x 30 sec / bras"],
+          ]},
+        ],
+        tip:"Dribble entre les jambes : c'est normal de perdre le ballon au début, recommence sans t'énerver."
+      },
+      {id:"s5", date:"2026-07-25", day:"Samedi 25 juillet", title:"Fractionné + Coordination + Tirs à sec", level:"moderee", duration:"~48 min",
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing progressif","6 min"],
+            ["Étirements dynamiques","2 min"],
+          ]},
+          {name:"Bloc cardio — fractionné", dur:"18 min", ex:[
+            ["Fractionné 30 sec / 30 sec","8 cycles"],
+            ["Skippings à vitesse progressive","3 x 20 sec"],
+          ]},
+          {name:"Coordination — exercices fun", dur:"12 min", ex:[
+            ["Jeu des lignes","4 x 1 min"],
+            ["Claquements de mains en rythme (jumping jacks)","3 x 30 sec"],
+            ["Équilibre dynamique","3 x 20 sec / pied"],
+          ]},
+          {name:"Bloc basket — technique tir à sec", dur:"10 min", ex:[
+            ["Position de tir (B.E.E.F.)","2 x 10 gestes","beef"],
+            ["Tirs contre un mur","3 x 10 tirs"],
+            ["Pivot avant et arrière","3 x 10 / pied"],
+          ]},
+          {name:"Retour au calme", dur:"7 min", ex:[
+            ["Étirements complets","routine complète"],
+            ["Respiration profonde","2 min"],
+          ]},
+        ],
+        tip:"BEEF = Balance / Eyes / Elbow / Follow-through. Travaille ce geste à sec chaque jour."
+      },
+      {id:"s6", date:"2026-07-27", day:"Lundi 27 juillet", title:"Circuit training complet + Gestuelle basket", level:"moderee", duration:"~50 min",
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing + accélérations","7 min"],
+            ["Mobilité complète (chevilles/hanches/épaules)","1 min"],
+          ]},
+          {name:"Circuit training — 3 tours", dur:"22 min", ex:[
+            ["A — Squats","12 reps"],
+            ["B — Pompes","8 reps"],
+            ["C — Pont fessier","12 reps"],
+            ["D — Fentes alternées","8 reps / côté"],
+            ["E — Planche avant","25 sec"],
+            ["F — Sauts verticaux","8 sauts"],
+          ]},
+          {name:"Gestuelle basket complète", dur:"10 min", ex:[
+            ["Appuis défensifs + sprint","5 rép. chaque côté"],
+            ["Lay-up à sec (sans ballon)","3 x 10 chaque côté"],
+            ["Dribble + arrêt + simulation tir","4 x 1 min"],
+          ]},
+          {name:"Retour au calme", dur:"8 min", ex:[
+            ["Étirements complets","routine complète"],
+          ]},
+        ],
+        tip:"L'arrêt en 2 temps est obligatoire au basket : un pied atterrit, puis l'autre."
+      },
+    ]
+  },
+  {
+    week:3, dates:"30 juillet – 3 août", theme:"Affûtage — prête pour la rentrée",
+    restDays:["Vendredi 31 juillet","Dimanche 2 août"],
+    sessions:[
+      {id:"s7", date:"2026-07-30", day:"Jeudi 30 juillet", title:"Puissance + Explosivité avancée + Basket", level:"donne", duration:"~55 min",
+        sections:[
+          {name:"Échauffement complet", dur:"10 min", ex:[
+            ["Footing progressif + accélérations","6 min"],
+            ["Mobilité dynamique complète","4 min"],
+          ]},
+          {name:"Renforcement — montée en puissance", dur:"22 min", ex:[
+            ["Squats sautés","4 x 10"],
+            ["Fentes sautées","3 x 8 / jambe"],
+            ["Pompes rythme rapide","4 x 8"],
+            ["Mountain climbers","3 x 20 sec"],
+            ["Abdos bicyclette","3 x 15 / côté"],
+          ]},
+          {name:"Explosivité — on décolle", dur:"12 min", ex:[
+            ["Sauts verticaux maximum","4 x 6 (10 sec repos)"],
+            ["Sauts en longueur sur place","3 x 5"],
+            ["Sprints de démarrage (départ assis)","5 x 10 m"],
+          ]},
+          {name:"Bloc basket intensif", dur:"8 min", ex:[
+            ["Dribble max vitesse","3 x (30+30+30 sec)"],
+            ["Appuis défensifs intensifs","3 x 1 min"],
+          ]},
+          {name:"Retour au calme", dur:"10 min", ex:[
+            ["Marche","3 min"],
+            ["Étirements profonds","7 min"],
+          ]},
+        ],
+        tip:"La détente ça s'entraîne ! Chaque semaine améliore ta capacité à sauter."
+      },
+      {id:"s8", date:"2026-08-01", day:"Samedi 1 août", title:"Endurance haute + Gestuelle complète", level:"donne", duration:"~55 min",
+        sections:[
+          {name:"Échauffement", dur:"10 min", ex:[
+            ["Footing progressif","8 min"],
+            ["Activation complète","2 min"],
+          ]},
+          {name:"Endurance — haute intensité", dur:"20 min", ex:[
+            ["Course soutenue","15 min"],
+            ["Fractionné final 40/20","5 x (40 sec + 20 sec)"],
+          ]},
+          {name:"Gestuelle basket complète", dur:"15 min", ex:[
+            ["Défense → transition → attaque","6 répétitions"],
+            ["Dribble avec changements de direction","4 x 1 min"],
+            ["Routine de tir libre (simulation)","3 x 10 tirs"],
+          ]},
+          {name:"Retour au calme", dur:"10 min", ex:[
+            ["Marche + étirements complets","10 min"],
+          ]},
+        ],
+        tip:"La régularité du geste au tir libre c'est 90% mental. Même routine à chaque tir."
+      },
+      {id:"s9", date:"2026-08-03", day:"Lundi 3 août", title:"Séance bilan — tu mesures ta progression !", level:"moderee", duration:"~55 min", isFinal:true,
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing + mobilité (routine maîtrisée)","8 min"],
+          ]},
+          {name:"Révision basket — tout ce qu'on a appris", dur:"15 min", ex:[
+            ["Dribble : toutes les variantes enchaînées","5 min continues"],
+            ["Gestes défensifs + offensifs","5 répétitions"],
+            ["10 tirs libres BEEF","10 tirs"],
+          ]},
+          {name:"Retour au calme final", dur:"12 min", ex:[
+            ["Marche calme","3 min"],
+            ["Étirements complets et profonds","7 min"],
+            ["Moment de fierté","2 min"],
+          ]},
+        ],
+        tests:[
+          {id:"s9-t1", label:"Test bilan — course 12 min", hint:"Note si tu as tenu les 12 min sans t'arrêter, ou combien de temps.", placeholder:"ex : 12 min sans arrêt"},
+          {id:"s9-t2", label:"Test bilan — planche tenue max", hint:"Temps tenu en planche, à comparer avec la séance 1.", placeholder:"ex : 55 sec"},
+          {id:"s9-t3", label:"Test bilan — 5 sauts verticaux max", hint:"Touches-tu plus haut qu'en semaine 1 ?", placeholder:"ex : touche la porte"},
+          {id:"s9-t4", label:"Test bilan — maîtrise balle 30 sec x 2 mains", hint:"Perds-tu le ballon moins souvent qu'au début ?", placeholder:"ex : 2 pertes main gauche"},
+        ],
+        compare:[
+          {label:"Endurance (course sans s'arrêter)", startId:"s1-t1", endId:"s9-t1", endId2:"s9b-t1"},
+          {label:"Gainage (planche tenue)", startId:"s1-t2", endId:"s9-t2", endId2:"s9b-t2"},
+          {label:"Saut vertical", startId:"s1-t3", endId:"s9-t3", endId2:"s9b-t3"},
+          {label:"Dribble (pertes de balle)", startId:"s1-t4", endId:"s9-t4", endId2:"s9b-t4"},
+        ],
+        tip:"Bravo pour ces 3 semaines de travail sérieux, c'est le mindset d'une vraie joueuse !"
+      },
+    ]
+  },
+  {
+    week:"3 bis", dates:"4 – 8 août (optionnel)", theme:"Pour celles qui rejouent la semaine 3 — selon le ressenti après la séance test",
+    restDays:["Mercredi 5 août","Vendredi 7 août"],
+    sessions:[
+      {id:"s7b", date:"2026-08-04", day:"Mardi 4 août", title:"Puissance + Explosivité avancée + Basket (reprise)", level:"donne", duration:"~55 min",
+        sections:[
+          {name:"Échauffement complet", dur:"10 min", ex:[
+            ["Footing progressif + accélérations","6 min"],
+            ["Mobilité dynamique complète","4 min"],
+          ]},
+          {name:"Renforcement — montée en puissance", dur:"22 min", ex:[
+            ["Squats sautés","4 x 10"],
+            ["Fentes sautées","3 x 8 / jambe"],
+            ["Pompes rythme rapide","4 x 8"],
+            ["Mountain climbers","3 x 20 sec"],
+            ["Abdos bicyclette","3 x 15 / côté"],
+          ]},
+          {name:"Explosivité — on décolle", dur:"12 min", ex:[
+            ["Sauts verticaux maximum","4 x 6 (10 sec repos)"],
+            ["Sauts en longueur sur place","3 x 5"],
+            ["Sprints de démarrage (départ assis)","5 x 10 m"],
+          ]},
+          {name:"Bloc basket intensif", dur:"8 min", ex:[
+            ["Dribble max vitesse","3 x (30+30+30 sec)"],
+            ["Appuis défensifs intensifs","3 x 1 min"],
+          ]},
+          {name:"Retour au calme", dur:"10 min", ex:[
+            ["Marche","3 min"],
+            ["Étirements profonds","7 min"],
+          ]},
+        ],
+        tip:"Séance de reprise de la semaine 3 — même contenu, pour consolider ce qui a été vu."
+      },
+      {id:"s8b", date:"2026-08-06", day:"Jeudi 6 août", title:"Endurance haute + Gestuelle complète (reprise)", level:"donne", duration:"~55 min",
+        sections:[
+          {name:"Échauffement", dur:"10 min", ex:[
+            ["Footing progressif","8 min"],
+            ["Activation complète","2 min"],
+          ]},
+          {name:"Endurance — haute intensité", dur:"20 min", ex:[
+            ["Course soutenue","15 min"],
+            ["Fractionné final 40/20","5 x (40 sec + 20 sec)"],
+          ]},
+          {name:"Gestuelle basket complète", dur:"15 min", ex:[
+            ["Défense → transition → attaque","6 répétitions"],
+            ["Dribble avec changements de direction","4 x 1 min"],
+            ["Routine de tir libre (simulation)","3 x 10 tirs"],
+          ]},
+          {name:"Retour au calme", dur:"10 min", ex:[
+            ["Marche + étirements complets","10 min"],
+          ]},
+        ],
+        tip:"La régularité du geste au tir libre c'est 90% mental. Même routine à chaque tir."
+      },
+      {id:"s9b", date:"2026-08-08", day:"Samedi 8 août", title:"Séance bilan (2e passage) — nouvelle mesure de ta progression !", level:"moderee", duration:"~55 min", isFinal:true,
+        sections:[
+          {name:"Échauffement", dur:"8 min", ex:[
+            ["Footing + mobilité (routine maîtrisée)","8 min"],
+          ]},
+          {name:"Révision basket — tout ce qu'on a appris", dur:"15 min", ex:[
+            ["Dribble : toutes les variantes enchaînées","5 min continues"],
+            ["Gestes défensifs + offensifs","5 répétitions"],
+            ["10 tirs libres BEEF","10 tirs"],
+          ]},
+          {name:"Retour au calme final", dur:"12 min", ex:[
+            ["Marche calme","3 min"],
+            ["Étirements complets et profonds","7 min"],
+            ["Moment de fierté","2 min"],
+          ]},
+        ],
+        tests:[
+          {id:"s9b-t1", label:"Test bilan (2e passage) — course 12 min", hint:"Note si tu as tenu les 12 min sans t'arrêter, ou combien de temps.", placeholder:"ex : 12 min sans arrêt"},
+          {id:"s9b-t2", label:"Test bilan (2e passage) — planche tenue max", hint:"Temps tenu en planche, à comparer avec tes résultats précédents.", placeholder:"ex : 55 sec"},
+          {id:"s9b-t3", label:"Test bilan (2e passage) — 5 sauts verticaux max", hint:"Touches-tu plus haut qu'avant ?", placeholder:"ex : touche la porte"},
+          {id:"s9b-t4", label:"Test bilan (2e passage) — maîtrise balle 30 sec x 2 mains", hint:"Perds-tu le ballon moins souvent qu'avant ?", placeholder:"ex : 2 pertes main gauche"},
+        ],
+        tip:"Merci de bien conserver aussi les résultats de ta séance bilan du 2 août — ça permet de mesurer la progression sur les deux passages !"
+      },
+    ]
+  },
+];
+
+const LEVEL_LABEL = {facile:"Facile", moderee:"Modérée", donne:"On se donne !"};
+const LEVEL_CLASS = {facile:"lvl-facile", moderee:"lvl-moderee", donne:"lvl-donne"};
+
+/* ---------------- STATE / STORAGE ---------------- */
+const STORAGE_KEY = "u13-preseason-progress";
+let state = { checked:{}, tests:{}, feelings:{}, notes:{}, open:{} };
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      state.checked = parsed.checked || {};
+      state.tests = parsed.tests || {};
+      state.feelings = parsed.feelings || {};
+      state.notes = parsed.notes || {};
+    }
+  }catch(e){ /* pas de progression enregistrée, ou stockage indisponible */ }
+}
+
+let saveTimer = null;
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        checked:state.checked, tests:state.tests, feelings:state.feelings, notes:state.notes
+      }));
+      showToast();
+    }catch(e){ console.error("Erreur de sauvegarde", e); }
+  }, 250);
+}
+
+function showToast(){
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(showToast._tm);
+  showToast._tm = setTimeout(()=> t.classList.remove('show'), 1200);
+}
+
+/* ---------------- COUNTING ---------------- */
+function sessionExerciseIds(session){
+  const ids = [];
+  session.sections.forEach((sec,si)=>{
+    sec.ex.forEach((e,ei)=> ids.push(`${session.id}-${si}-${ei}`));
+  });
+  return ids;
+}
+function sessionProgress(session){
+  const ids = sessionExerciseIds(session);
+  const done = ids.filter(id=>state.checked[id]).length;
+  return {done, total:ids.length};
+}
+function allSessions(){
+  return PROGRAM.flatMap(w=>w.sessions);
+}
+function coreSessions(){
+  return allSessions().filter(s=> /^s[1-9]$/.test(s.id));
+}
+function overallProgress(){
+  let done=0, total=0, sessionsDone=0;
+  const core = coreSessions();
+  core.forEach(s=>{
+    const p = sessionProgress(s);
+    done += p.done; total += p.total;
+    if(p.total>0 && p.done===p.total) sessionsDone++;
+  });
+  return {done, total, sessionsDone, sessionsTotal: core.length};
+}
+
+/* ---------------- RENDER ---------------- */
+function circumference(r){ return 2*Math.PI*r; }
+
+function renderMainRing(){
+  const {total, done, sessionsDone, sessionsTotal} = overallProgress();
+  const pct = total ? Math.round((done/total)*100) : 0;
+  const C = circumference(74);
+  const ring = document.getElementById('mainRing');
+  ring.setAttribute('stroke-dasharray', C.toFixed(1));
+  ring.setAttribute('stroke-dashoffset', (C * (1 - pct/100)).toFixed(1));
+  document.getElementById('mainPct').textContent = pct + '%';
+  document.getElementById('mainSub').textContent = `${sessionsDone} / ${sessionsTotal} séances`;
+}
+
+function exCheckSvg(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+}
+function chevronSvg(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+}
+
+function buildVisual(type){
+  const wrap = document.createElement('div');
+  wrap.className = 'ex-visual';
+  if(type === 'beef'){
+    wrap.innerHTML = `
+      <div style="margin-bottom:2px;">Repère visuel — le geste en 4 étapes :</div>
+      <div class="beef-row">
+        <div class="beef-step"><span class="em">⚖️</span><span class="lb">Balance<br>équilibre</span></div>
+        <div class="beef-step"><span class="em">👁️</span><span class="lb">Eyes<br>yeux sur cible</span></div>
+        <div class="beef-step"><span class="em">💪</span><span class="lb">Elbow<br>coude aligné</span></div>
+        <div class="beef-step"><span class="em">✋</span><span class="lb">Follow-through<br>poignet qui bascule</span></div>
+      </div>
+    `;
+  } else if(type === 'defense'){
+    wrap.innerHTML = `
+      <div style="margin-bottom:2px;">Repère visuel — position basse, pieds écartés :</div>
+      <div class="defense-row">🧍‍♀️<span class="arrow">⟵</span>👣 👣<span class="arrow">⟶</span>🧍‍♀️</div>
+      <div class="defense-no-cross">🚫 Les pieds ne se croisent jamais</div>
+    `;
+  }
+  return wrap;
+}
+
+function buildSessionCard(session){
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = session.id;
+
+  const p = sessionProgress(session);
+  const miniC = circumference(15);
+
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  head.innerHTML = `
+    <div class="lvl-bar ${LEVEL_CLASS[session.level]}"></div>
+    <div class="card-head-txt">
+      <div class="card-day">${session.day}</div>
+      <div class="card-title">${session.title}</div>
+      <div class="card-meta">${LEVEL_LABEL[session.level]} · ${session.duration}</div>
+    </div>
+    <div class="mini-ring">
+      <svg width="38" height="38" viewBox="0 0 38 38">
+        <circle class="mini-track" cx="19" cy="19" r="15"></circle>
+        <circle class="mini-fill" cx="19" cy="19" r="15"
+          stroke-dasharray="${miniC.toFixed(1)}"
+          stroke-dashoffset="${(miniC*(1-(p.total?p.done/p.total:0))).toFixed(1)}"></circle>
+      </svg>
+      <div class="chk">${p.done}/${p.total}</div>
+    </div>
+    <div class="chevron">${chevronSvg()}</div>
+  `;
+  head.addEventListener('click', ()=>{
+    card.classList.toggle('open');
+  });
+
+  const body = document.createElement('div');
+  body.className = 'card-body';
+  const inner = document.createElement('div');
+  inner.className = 'card-body-inner';
+
+  const feelBox = document.createElement('div');
+  feelBox.className = 'feeling-box';
+  const FEELINGS = [
+    {key:'top', em:'🟢', label:'En forme'},
+    {key:'ok', em:'🟡', label:'Ça va'},
+    {key:'tired', em:'🔴', label:'Fatiguée'},
+  ];
+  feelBox.innerHTML = `
+    <div class="feeling-label">Comment tu te sens aujourd'hui ?</div>
+    <div class="feeling-options">
+      ${FEELINGS.map(f=>`
+        <div class="feeling-opt ${state.feelings[session.id]===f.key?'selected':''}" data-key="${f.key}">
+          <span class="em">${f.em}</span><span>${f.label}</span>
+        </div>`).join('')}
+    </div>
+  `;
+  feelBox.querySelectorAll('.feeling-opt').forEach(opt=>{
+    opt.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      const key = opt.dataset.key;
+      state.feelings[session.id] = (state.feelings[session.id]===key) ? undefined : key;
+      feelBox.querySelectorAll('.feeling-opt').forEach(o=> o.classList.toggle('selected', o.dataset.key===state.feelings[session.id]));
+      saveState();
+    });
+  });
+  inner.appendChild(feelBox);
+
+  session.sections.forEach((sec, si)=>{
+    const secEl = document.createElement('div');
+    secEl.className = 'section';
+    secEl.innerHTML = `<div class="section-title"><span>${sec.name}</span><span class="dur">${sec.dur}</span></div>`;
+    sec.ex.forEach((e, ei)=>{
+      const id = `${session.id}-${si}-${ei}`;
+      const row = document.createElement('div');
+      row.className = 'ex-row';
+      const isChecked = !!state.checked[id];
+      row.innerHTML = `
+        <div class="ex-check ${isChecked?'checked':''}" data-id="${id}">${exCheckSvg()}</div>
+        <div class="ex-txt ${isChecked?'checked-txt':''}">${e[0]}</div>
+        <div class="ex-detail">${e[1]}</div>
+      `;
+      const checkEl = row.querySelector('.ex-check');
+      const txtEl = row.querySelector('.ex-txt');
+      checkEl.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const nowChecked = !state.checked[id];
+        state.checked[id] = nowChecked;
+        checkEl.classList.toggle('checked', nowChecked);
+        txtEl.classList.toggle('checked-txt', nowChecked);
+        refreshSessionCard(session);
+        renderMainRing();
+        saveState();
+      });
+      secEl.appendChild(row);
+      if(e[2]) secEl.appendChild(buildVisual(e[2]));
+    });
+    inner.appendChild(secEl);
+  });
+
+  if(session.tests){
+    const secEl = document.createElement('div');
+    secEl.className = 'section';
+    secEl.innerHTML = `<div class="section-title"><span>Tests physiques — note tes résultats</span></div>`;
+    session.tests.forEach(t=>{
+      const row = document.createElement('div');
+      row.className = 'test-row';
+      row.innerHTML = `
+        <label for="${t.id}">${t.label}</label>
+        <span class="test-hint">${t.hint}</span>
+        <input type="text" id="${t.id}" placeholder="${t.placeholder}" value="${state.tests[t.id] ? state.tests[t.id].replace(/"/g,'&quot;') : ''}">
+      `;
+      const inputEl = row.querySelector('input');
+      inputEl.addEventListener('input', ()=>{
+        state.tests[t.id] = inputEl.value;
+        renderComparisonTable();
+        saveState();
+      });
+      secEl.appendChild(row);
+    });
+    inner.appendChild(secEl);
+  }
+
+  if(session.compare){
+    const compSec = document.createElement('div');
+    compSec.className = 'section compare-section';
+    compSec.innerHTML = `<div class="section-title"><span>Évolution — départ vs bilan(s)</span></div>
+      <table class="compare-table" id="compareTable-${session.id}">
+        <thead><tr><th>Mesure</th><th>Séance 1</th><th>Bilan (2 août)</th><th>Bilan (8 août)</th></tr></thead>
+        <tbody></tbody>
+      </table>`;
+    inner.appendChild(compSec);
+  }
+
+  if(session.tip){
+    const tipEl = document.createElement('div');
+    tipEl.className = 'tip';
+    tipEl.innerHTML = `<b>Astuce coach —</b> ${session.tip}`;
+    inner.appendChild(tipEl);
+  }
+
+  const notesBox = document.createElement('div');
+  notesBox.className = 'notes-box';
+  notesBox.innerHTML = `
+    <label for="notes-${session.id}">Mes sensations sur cette séance</label>
+    <textarea id="notes-${session.id}" placeholder="ex : jambes lourdes au début, mais j'ai bien tenu la course...">${state.notes[session.id] ? escapeHtml(state.notes[session.id]) : ''}</textarea>
+  `;
+  const notesArea = notesBox.querySelector('textarea');
+  notesArea.addEventListener('input', ()=>{
+    state.notes[session.id] = notesArea.value;
+    saveState();
+  });
+  inner.appendChild(notesBox);
+
+  const actionsRow = document.createElement('div');
+  actionsRow.className = 'card-actions';
+  actionsRow.innerHTML = `
+    <button type="button" class="cal-btn">📅 Ajouter au calendrier</button>
+    <button type="button" class="print-btn">🖨️ Imprimer la fiche</button>
+  `;
+  actionsRow.querySelector('.cal-btn').addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    downloadIcs(session);
+  });
+  actionsRow.querySelector('.print-btn').addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    printSession(session);
+  });
+  inner.appendChild(actionsRow);
+
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'reset-btn';
+  resetBtn.textContent = 'Réinitialiser cette séance';
+  resetBtn.addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    sessionExerciseIds(session).forEach(id=> delete state.checked[id]);
+    if(session.tests) session.tests.forEach(t=> delete state.tests[t.id]);
+    delete state.feelings[session.id];
+    delete state.notes[session.id];
+    refreshSessionCard(session);
+    rebuildCardBody(session, inner);
+    renderMainRing();
+    renderComparisonTable();
+    saveState();
+  });
+  inner.appendChild(resetBtn);
+
+  body.appendChild(inner);
+  card.appendChild(head);
+  card.appendChild(body);
+
+  if(p.total>0 && p.done===p.total) card.classList.add('done');
+
+  return card;
+}
+
+function rebuildCardBody(session, innerEl){
+  // Simplest reliable way to reflect a full reset: re-render whole card in place
+  const card = innerEl.closest('.card');
+  const wasOpen = card.classList.contains('open');
+  const newCard = buildSessionCard(session);
+  if(wasOpen) newCard.classList.add('open');
+  card.replaceWith(newCard);
+}
+
+function refreshSessionCard(session){
+  const card = document.querySelector(`.card[data-id="${session.id}"]`);
+  if(!card) return;
+  const p = sessionProgress(session);
+  const miniFill = card.querySelector('.mini-fill');
+  const miniC = circumference(15);
+  miniFill.setAttribute('stroke-dashoffset', (miniC*(1-(p.total?p.done/p.total:0))).toFixed(1));
+  card.querySelector('.chk').textContent = `${p.done}/${p.total}`;
+  card.classList.toggle('done', p.total>0 && p.done===p.total);
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function extractNumber(str){
+  if(!str) return null;
+  const m = str.replace(',', '.').match(/(\d+(\.\d+)?)/);
+  return m ? parseFloat(m[1]) : null;
+}
+
+function renderComparisonTable(){
+  const session = allSessions().find(s=>s.compare);
+  if(!session) return;
+  const table = document.getElementById(`compareTable-${session.id}`);
+  if(!table) return;
+  const tbody = table.querySelector('tbody');
+  tbody.innerHTML = '';
+  session.compare.forEach(c=>{
+    const startVal = state.tests[c.startId];
+    const endVal = state.tests[c.endId];
+    const end2Val = c.endId2 ? state.tests[c.endId2] : null;
+    const startNum = extractNumber(startVal);
+    const endNum = extractNumber(endVal);
+    const end2Num = c.endId2 ? extractNumber(end2Val) : null;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.label}</td>
+      <td class="${startVal ? '' : 'empty'}">${startVal ? escapeHtml(startVal) : '—'}</td>
+      <td class="${endVal ? '' : 'empty'}">${endVal ? escapeHtml(endVal) : '—'}</td>
+      <td class="${end2Val ? '' : 'empty'}">${end2Val ? escapeHtml(end2Val) : '—'}</td>
+    `;
+    tbody.appendChild(tr);
+    const nums = [
+      {label:'Départ', val:startNum, cls:'start'},
+      {label:'Bilan 1', val:endNum, cls:'end'},
+    ];
+    if(end2Num !== null) nums.push({label:'Bilan 2', val:end2Num, cls:'end2'});
+    const validNums = nums.filter(n=> n.val !== null);
+    if(validNums.length >= 2){
+      const max = Math.max(...validNums.map(n=>n.val), 1);
+      const barTr = document.createElement('tr');
+      const barTd = document.createElement('td');
+      barTd.colSpan = 4;
+      barTd.innerHTML = `
+        <div class="compare-bars">
+          ${validNums.map(n=>`
+            <div class="compare-bar-row"><span style="width:52px;">${n.label}</span>
+              <div class="compare-bar-track"><div class="compare-bar-fill ${n.cls}" style="width:${(n.val/max*100).toFixed(0)}%"></div></div>
+            </div>`).join('')}
+        </div>
+      `;
+      barTr.appendChild(barTd);
+      tbody.appendChild(barTr);
+    }
+  });
+}
+
+function restDayEl(label){
+  const el = document.createElement('div');
+  el.className = 'rest-chip';
+  el.innerHTML = `<span class="rest-icon">🛌</span><span><b>Repos</b> — ${label}</span>`;
+  return el;
+}
+
+function renderProgram(){
+  const root = document.getElementById('weeks');
+  root.innerHTML = '';
+  PROGRAM.forEach(w=>{
+    const weekEl = document.createElement('div');
+    weekEl.className = 'week';
+    weekEl.innerHTML = `
+      <div class="week-head">
+        <h2>Semaine ${w.week}</h2>
+        <span class="dates">${w.dates}</span>
+      </div>
+      <div class="week-theme">${w.theme}</div>
+    `;
+    w.sessions.forEach((s, idx)=>{
+      weekEl.appendChild(buildSessionCard(s));
+      if(w.restDays && w.restDays[idx]){
+        weekEl.appendChild(restDayEl(w.restDays[idx]));
+      }
+    });
+    root.appendChild(weekEl);
+  });
+  renderComparisonTable();
+}
+
+/* ---------------- CALENDAR EXPORT (.ics) ---------------- */
+function pad(n){ return n.toString().padStart(2,'0'); }
+
+function downloadIcs(session){
+  const [y,m,d] = session.date.split('-').map(Number);
+  const startH = 18, startMin = 0; // 18h00 par défaut, à ajuster dans le calendrier ensuite
+  const durMin = parseInt((session.duration.match(/\d+/g)||[45]).pop(), 10) || 45;
+  const start = new Date(y, m-1, d, startH, startMin);
+  const end = new Date(start.getTime() + durMin*60000);
+  const fmt = (dt)=> `${dt.getFullYear()}${pad(dt.getMonth()+1)}${pad(dt.getDate())}T${pad(dt.getHours())}${pad(dt.getMinutes())}00`;
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//U13 Filles//Preseason//FR','BEGIN:VEVENT',
+    `UID:${session.id}-${Date.now()}@u13-preseason`,
+    `DTSTAMP:${fmt(new Date())}`,
+    `DTSTART:${fmt(start)}`,
+    `DTEND:${fmt(end)}`,
+    `SUMMARY:${session.title.replace(/,/g,' ')}`,
+    `DESCRIPTION:Séance de pré-saison U13 filles — ${LEVEL_LABEL[session.level]}, ${session.duration}.`,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], {type:'text/calendar'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${session.id}-${session.date}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------- PRINT A SINGLE SESSION ---------------- */
+function printSession(session){
+  const card = document.querySelector(`.card[data-id="${session.id}"]`);
+  if(!card) return;
+  card.classList.add('print-target');
+  document.body.classList.add('printing');
+  const cleanup = ()=>{
+    card.classList.remove('print-target');
+    document.body.classList.remove('printing');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  setTimeout(()=> window.print(), 50);
+}
+
+/* ---------------- COPY RECAP ---------------- */
+function buildRecapText(){
+  const lines = [];
+  lines.push('📋 Récap — Pré-saison U13 Filles');
+  const {done, total, sessionsDone, sessionsTotal} = overallProgress();
+  lines.push(`Progression globale : ${sessionsDone}/${sessionsTotal} séances terminées (${total?Math.round(done/total*100):0}%)`);
+  lines.push('');
+  allSessions().forEach(s=>{
+    const p = sessionProgress(s);
+    const feel = state.feelings[s.id];
+    const feelTxt = feel==='top' ? ' 🟢' : feel==='ok' ? ' 🟡' : feel==='tired' ? ' 🔴' : '';
+    lines.push(`• ${s.day} — ${s.title} : ${p.done}/${p.total}${feelTxt}`);
+    if(state.notes[s.id]) lines.push(`   note : ${state.notes[s.id]}`);
+    if(s.tests){
+      s.tests.forEach(t=>{
+        if(state.tests[t.id]) lines.push(`   ${t.label} : ${state.tests[t.id]}`);
+      });
+    }
+  });
+  return lines.join('\n');
+}
+
+async function copyRecap(){
+  const text = buildRecapText();
+  try{
+    await navigator.clipboard.writeText(text);
+    showToast();
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); showToast(); }catch(e2){ alert('Impossible de copier automatiquement — sélectionne le texte manuellement.'); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* ---------------- INIT ---------------- */
+function init(){
+  loadState();
+  renderProgram();
+  renderMainRing();
+
+  document.getElementById('copyRecap').addEventListener('click', copyRecap);
+
+  document.getElementById('globalReset').addEventListener('click', ()=>{
+    if(!confirm('Réinitialiser toute la progression du programme ?')) return;
+    state.checked = {};
+    state.tests = {};
+    state.feelings = {};
+    state.notes = {};
+    renderProgram();
+    renderMainRing();
+    saveState();
+  });
+}
+init();
+</script>
+</body>
+</html>
